@@ -30,6 +30,7 @@
 		
 		<div>
 			<!-- submit 버튼을 클릭하면 form태그의 action에 있는 페이지로 이동한다 -->
+			<!-- submit은 action을 활성화 시킨다!! -->
 			<input type="submit" value="로그인!">
 		</div>
 	</form>
