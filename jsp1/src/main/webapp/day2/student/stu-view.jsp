@@ -31,7 +31,7 @@
 			<th>학년</th>
 		</tr>
 	<%
-		String sql = "SELECT * FROM STUDENT WHERE STU_NO = " + stuNo;
+		String sql = "SELECT * FROM STUDENT WHERE STU_NO = '" + stuNo + "'";
 		ResultSet rs = stmt.executeQuery(sql);
 		if(rs.next()){
 	%>
@@ -41,13 +41,14 @@
 			<td><%= rs.getString("STU_DEPT") %></td>
 			<td><%= rs.getString("STU_GRADE") %></td>
 		</tr>
+	</table>
 	<% 	
 		} else {
 			out.println("학생 존재하지 않음");
 		}
 	%>
 	<input name="stuNo" value ="<%= stuNo %>" hidden>
-	</table>
+
 	<div class="btn-area">
 		<input type="button" value="수정" onclick="fnEdit()">
 		<input type="button" value="삭제" onclick="fnRemove()">
@@ -63,7 +64,7 @@
 		form.submit();
 	}
 	function fnRemove(){
-		console.log(<%= stuNo %>);
+		<%-- console.log(<%= stuNo %>); --%>
 		location.href = "stu-remove.jsp?stuNo=" + <%= stuNo %>;
 	}
 

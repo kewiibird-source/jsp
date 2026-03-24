@@ -11,12 +11,10 @@
 	<%@ include file="../../db.jsp" %>
 	<%
 		String stuNo = request.getParameter("stuNo");
+		/* input의 키값인 name="stuNo" 으로 받아야한다 */
 		String stuName = request.getParameter("stuName");
 		String stuDept = request.getParameter("stuDept");
 		String stuGrade = request.getParameter("stuGrade");
-		
-		out.println("stuNo" + "stuName" + "stuDept" + "stuGrade");
-		out.println(stuNo);
 		
 		String sql = "INSERT INTO STUDENT(STU_NO, STU_NAME, STU_DEPT, STU_GRADE)"
 				+ " VALUES('" + stuNo + "','" + stuName + "','" + stuDept + "','" + stuGrade + "')";

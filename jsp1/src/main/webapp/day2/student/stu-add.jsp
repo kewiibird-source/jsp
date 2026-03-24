@@ -18,24 +18,24 @@
 <body>
 	<!-- 학생삽입 -->
 	<form action="stu-add-result.jsp" name="form">
-		<table>
-			<tr>
-				<th>학 번</th>
-				<td><input name="stuNo"></td>
-			</tr>
-			<tr>
-				<th>이 름</th>
-				<td><input name="stuName"></td>
-			</tr>
-			<tr>
-				<th>학 과</th>
-				<td><input name="stuDept"></td>
-			</tr>
-			<tr>
-				<th>학 년</th>
-				<td><input name="stuGrade"></td>
-			</tr>
-		</table>
+		<div>
+			<label>학번 : <input name="stuNo"></label>
+		</div>
+		<div>
+			<label>이름 : <input name="stuName"></label>
+		</div>
+		<div>
+			<label>학과 : <input name="stuDept"></label>
+		</div>
+		<div>
+			<label>학년 : 
+				<select name="stuGrade">
+					<option value="1"> 1 </option>
+					<option value="2"> 2 </option>
+					<option value="3"> 3 </option>
+				</select>
+			</label>
+		</div>
 		<div>
 			<input type="button" value="학생추가" onclick=fnAdd()>
 			<input type="reset" value="초기화">

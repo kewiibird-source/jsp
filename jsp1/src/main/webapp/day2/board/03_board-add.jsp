@@ -17,6 +17,7 @@
 	th { width : 50px; }
 	td { width : 300px; }
 	input[type='text'] { width : 280px; }
+	
 </style>
 <body>
 	<form action="03_board-add-result.jsp" name="form">
@@ -43,7 +44,6 @@
 			<input type="reset" value="초기화">
 			<!-- form 안에 있는 태그들을 대상으로 초기화 -->
 			<a href="03_board-list.jsp"><input type="button" value="되돌아가기"></a>		
-		</div>
 		
 	</form>
 </body>
