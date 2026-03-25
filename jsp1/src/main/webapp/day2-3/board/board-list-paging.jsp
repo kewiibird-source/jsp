@@ -8,7 +8,7 @@
 <style>
 	#container{
 		width : 800px;
-		margin : 10px auto;
+		margin : 80px auto;
 	}
 	table{
 		width : 100%;
@@ -18,18 +18,14 @@
 		text-align: right;
 		margin-bottom : 5px; 
 	}
-	body {
-		margin : 30px;
-	}
+	body { margin : 30px; }
 	table, th, tr, td {
 		border : 1px solid black;
 		padding : 5px 10px;
 		border-collapse: collapse;
 		text-align: center;
 	}
-	th {
-		background-color: #eee;
-	}
+	th { background-color: #eee; }
 	.paging-area {
 		margin-top : 5px;
 		text-align: center
@@ -44,6 +40,18 @@
 		font-weight: bold;
 		color : black;
 	}
+	tr .title {
+		text-align : left;
+		width : 40%;
+	}
+	.comment-cnt { 
+		color : blue; 
+		font-weight : bold;
+	}
+	.search-area { 
+		margin : 10px 0px;
+		text-align : center;	
+	}
 </style>
 </head>
 <body>
@@ -56,7 +64,13 @@
 			if(request.getParameter("pageSize") != null){
 				pageSize = Integer.parseInt(request.getParameter("pageSize"));
 			}
+			String keyword = request.getParameter("keyword");
+			
 		%>
+		<div class="search-area">
+		<label>검색어 : <input name="keyword" value="<%= keyword != null ? keyword : "" %>"></label>
+		<input type="submit" value="검색">
+		</div>
 		<div class="select-area">
 			<select name="pageSize" onchange="fnPageSize()">
 				<%
@@ -78,10 +92,14 @@
 				<th>작성일</th>
 			</tr>
 		<%	
+			/* 검색 키워드 값에 따라 total 값도 변경 */
+			String cntSql = "SELECT COUNT(*) AS TOTAL FROM TBL_BOARD WHERE 1=1 ";
+			if(keyword != null){
+				cntSql += "AND TITLE LIKE '%" + keyword + "%' ";
+			}
+			
 			/* 전체 페이지 수를 rsCnt에 담고 */
-			ResultSet rsCnt = stmt.executeQuery(
-				"SELECT COUNT(*) AS TOTAL FROM TBL_BOARD "
-			);	
+			ResultSet rsCnt = stmt.executeQuery(cntSql);	
 			rsCnt.next();
 			/* rsCnt에 담겨있는 TOTAL(40개)를 total에 넣음 */
 			int total = rsCnt.getInt("TOTAL");
@@ -96,12 +114,25 @@
 			}
 			/* (현재페이지)-1 * (한페이지에 나타낼 항목개수 5개(디폴트)) */
 			int offset = (currentPage - 1) * pageSize;
-			out.println(offset);
+			/* out.println(offset); */
 			
-			String sql = "SELECT B.*, TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS CDATE "
-						+ "FROM TBL_BOARD B WHERE 1=1 ";
+			
+			String sql = /* 댓글개수 comment_cnt에서 조인하기 */
+			    "SELECT B.*, TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS CDATE, NVL(COMMENT_CNT, 0) AS COMMENT_CNT " +
+			    "FROM TBL_BOARD B " +
+			    "LEFT JOIN ( " +
+			    "    SELECT COUNT(*) AS COMMENT_CNT, BOARDNO " +
+			    "    FROM TBL_COMMENT " +
+			    "    GROUP BY BOARDNO " +
+			    ") T ON B.BOARDNO = T.BOARDNO " +
+			    "WHERE 1=1 ";
+			
+			/* 검색창에서 검색했을때 최초(null)이 아닐시 sql 조건 추가 */
+			if(keyword != null){
+				sql += "AND TITLE LIKE '%" + keyword + "%' ";
+			}
 			if(true){
-				sql += "ORDER BY BOARDNO ASC ";	
+				sql += "ORDER BY B.BOARDNO ASC ";	
 			}
 			if(true){
 				sql += "OFFSET " + offset + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
@@ -112,7 +143,12 @@
 		%>
 				<tr>
 					<td><%= rs.getString("BOARDNO") %></td>
-					<td><%= rs.getString("TITLE") %></td>
+					<td class="title">
+						<%= rs.getString("TITLE") %> 
+						<% if(rs.getInt("COMMENT_CNT") != 0){ %> <!-- comment_cnt가 0이아닐때만 표시 -->
+						<span class="comment-cnt">[ <%= rs.getInt("COMMENT_CNT") %> ]</span>
+						<% } %>
+					</td>
 					<td><%= rs.getString("USERID") %></td>
 					<td><%= rs.getString("CNT") %></td>
 					<td><%= rs.getString("CDATE") %></td>
@@ -123,17 +159,17 @@
 		</table>
 		<div class="paging-area">
 			<% if(currentPage != 1){ %>
-				<a href="?page=<%= currentPage-1 %>&pageSize=<%= pageSize %>">◀</a> <!-- 누르면 현재페이지 -1 대신 1페이지에서는 안보이기 -->
+				<a href="?page=<%= currentPage-1 %>&pageSize=<%= pageSize %>&keyword=<%= keyword %>">◀</a> <!-- 누르면 현재페이지 -1 대신 1페이지에서는 안보이기 -->
 			<% } %>
 			<%
 				for(int i=1; i<=pageList; i++){
 			%>
-				<a href="?page=<%= i %>&pageSize=<%= pageSize %>" class="<%= currentPage == i ? "active" : "" %>"> <%= i %> </a>
+				<a href="?page=<%= i %>&pageSize=<%= pageSize %>&keyword=<%= keyword %>" class="<%= currentPage == i ? "active" : "" %>"> <%= i %> </a>
 			<%		
 				}
 			%>
 			<% if(currentPage != pageList){ %>
-			<a href="?page=<%= currentPage+1 %>&pageSize=<%= pageSize %>">▶</a> <!-- 누르면 현재페이지 -1 대신 1페이지에서는 안보이기 -->
+			<a href="?page=<%= currentPage+1 %>&pageSize=<%= pageSize %>&keyword=<%= keyword %>">▶</a> <!-- 누르면 현재페이지 -1 대신 1페이지에서는 안보이기 -->
 			<% } %> <!-- 누르면 현재페이지 +1 대신 마지막 페이지에서는 안보이기 -->
 		</div>
 	</form>
@@ -146,9 +182,3 @@
 	}
 	
 </script>
-
-
-
-
-
-

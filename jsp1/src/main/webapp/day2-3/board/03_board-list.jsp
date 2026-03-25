@@ -56,6 +56,8 @@
 		String sql = "SELECT B.*, TO_CHAR(CDATETIME, 'YYYY-MM-DD') " 
 					+ "AS CDATE FROM TBL_BOARD B WHERE 1=1 ";
 		
+		
+		
 		if(keyword != null){
 			sql += "AND TITLE LIKE '%" + keyword + "%' ";
 		}

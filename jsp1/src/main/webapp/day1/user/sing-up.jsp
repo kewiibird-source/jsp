@@ -10,6 +10,7 @@
 	<form action="sing-up-result.jsp" method="get" name="singUp"> 
 		<div>
 			<label>아이디 : <input name="userId"></label>
+			<input type="button" value="중복체크" onclick="fnCheck">
 		</div>
 		<div>
 			<label>비밀번호 : <input name="pwd" type="password"></label>
@@ -34,6 +35,13 @@
 </body>
 </html>
 <script>
+	function fnCheck(){
+		let form = document.form;
+		let userId = form.userId.value;
+
+		window.open("student-check.jsp?stuNo="+stuNo ,"check" ,"width=400, height=400");
+	}
+	
 	function fnsingUp(){
 		let singUp = document.singUp; // form태그 안 action의 name
 		/* console.log(singUp.userId.value); */
